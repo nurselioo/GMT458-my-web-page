@@ -1,0 +1,214 @@
+/* Google Fonts - Yumuşak ve Modern Sans-Serif Font */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --bg-page: #FDFBF7;              
+    --surface-card: #FFFFFF;         
+    --surface-hover: #FFF5F7;        
+    
+    --text-primary: #2D221E;         /* Derin espresso kahvesi ana metin */
+    --text-muted: #6C584C;           /* Yumuşak sütlü kahve alt metinler */
+    
+    --brand-pink: #C96877;           /* Zarif gül kurusu / pudra vurgusu */
+    --brand-pink-dark: #B85B6C;      /* Başlık ve logo için koyu gül kurusu */
+    --brand-pink-soft: #F9EBEA;      /* Rozet ve etiket arka planı */
+    
+    --coffee-dark: #3E2723;          /* Tablo başlığı için sıcak moka kahve */
+    --border-color: #EADCC9;         /* Latte tonlarında yumuşak ayraç çizgileri */
+    --border-pink: #E8B4B8;          /* Harita ve görseller için ince gül kurusu kenarlık */
+    
+    --radius-soft: 18px;             /* Kartlar için yumuşak kıvrım */
+    --radius-element: 10px;          /* Harita ve butonlar için kıvrım */
+    
+    /* Pembe-kahve süzülen sıcak gölge */
+    --shadow-warm: 0 10px 25px -5px rgba(62, 39, 35, 0.05), 
+                   0 8px 10px -6px rgba(201, 104, 119, 0.04);
+}
+
+/* --- 2. Sıfırlama ve Temel Stiller --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+body {
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    line-height: 1.65;
+}
+
+/* --- 3. Navigasyon Menüsü --- */
+nav {
+    background: var(--bg-page);
+    padding: 1.2rem 2.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--shadow-warm);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.brand {
+    display: flex;
+    flex-direction: column;
+}
+
+.brand .logo-name {
+    color: var(--brand-pink-dark);
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+}
+
+.brand .logo-subtitle {
+    color: var(--brand-pink);
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 2px;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 1.8rem;
+}
+
+nav a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: color 0.25s ease;
+}
+
+nav a:hover, nav a.active {
+    color: var(--brand-pink);
+}
+
+/* --- 4. Sayfa İçi Kapsayıcı ve Tanıtım Kartı --- */
+.container {
+    max-width: 1000px;
+    margin: 2.5rem auto;
+    padding: 0 1.2rem;
+}
+
+.hero-box {
+    background: var(--surface-card);
+    padding: 3rem 2.5rem;
+    border-radius: var(--radius-soft);
+    box-shadow: var(--shadow-warm);
+    animation: fadeInSlideUp 1.2s ease-out forwards;
+}
+
+.hero-box h1 {
+    font-size: 2.1rem;
+    color: var(--text-primary);
+    font-weight: 800;
+    margin-bottom: 0.8rem;
+    letter-spacing: -0.5px;
+}
+
+.hero-box p {
+    color: var(--text-muted);
+    font-size: 1.05rem;
+}
+
+@keyframes fadeInSlideUp {
+    0% {
+        opacity: 0;
+        transform: translateY(25px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --- 5. Tablo Stili --- */
+table.custom-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--surface-card);
+    border-radius: var(--radius-soft);
+    overflow: hidden;
+    box-shadow: var(--shadow-warm);
+    margin-top: 2rem;
+}
+
+table.custom-table th, table.custom-table td {
+    padding: 1.1rem 1.3rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+table.custom-table th {
+    background-color: var(--coffee-dark);
+    color: #FDFBF7;
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 0.3px;
+}
+
+table.custom-table tr {
+    transition: background-color 0.2s ease;
+}
+
+table.custom-table tr:hover {
+    background-color: var(--surface-hover); /* Uçuk pembe ışıltı */
+}
+
+table.custom-table img {
+    width: 60px;
+    height: 85px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid var(--border-pink);
+    display: block;
+}
+
+/* --- 6. Harita Alanı ve CBS Başlığı --- */
+.map-container {
+    margin-top: 2.5rem;
+    margin-bottom: 2.5rem;
+    background: var(--surface-card);
+    padding: 2rem;
+    border-radius: var(--radius-soft);
+    box-shadow: var(--shadow-warm);
+}
+
+.map-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.2rem;
+}
+
+.map-header h2 {
+    color: var(--text-primary);
+    font-size: 1.35rem;
+    font-weight: 700;
+}
+
+.map-badge {
+    background-color: var(--brand-pink-soft);
+    color: var(--brand-pink-dark);
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 0.35rem 0.8rem;
+    border-radius: 20px;
+    letter-spacing: 0.3px;
+}
+
+#leafletMap, #openlayersMap {
+    width: 100%;
+    height: 440px;
+    border-radius: var(--radius-element);
+    border: 1.5px solid var(--border-pink); /* İnce gül kurusu çerçeve */
+}

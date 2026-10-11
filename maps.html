@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Kişisel Web Sayfası | Haritalar</title>
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Leaflet CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- OpenLayers CSS & JS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v8.2.0/ol.css">
+    <script src="https://cdn.jsdelivr.net/npm/ol@v8.2.0/dist/ol.js"></script>
+</head>
+<body>
+    <nav>
+        <div class="logo">GMT 458 - Web GIS</div>
+        <ul>
+            <li><a href="index.html">Hakkımda</a></li>
+            <li><a href="books.html">Kitaplar</a></li>
+            <li><a href="maps.html" class="active">Haritalar (Gezilecek Yerler)</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <!-- Leaflet Bölümü -->
+        <div class="map-container">
+            <h2>1. Leaflet Haritası - Gezmek İstediğim Yerler</h2>
+            <p><strong>Not:</strong> Marker çakışmasını önlemek için işaretçiler sadece <em>Zoom &ge; 6</em> seviyesinde görünür. Haritanın yatayda tekrarlanması <code>noWrap: true</code> ile engellenmiştir.</p>
+            <div id="leafletMap"></div>
+        </div>
+
+        <!-- OpenLayers Bölümü -->
+        <div class="map-container">
+            <h2>2. OpenLayers Haritası - Gezilecek Rotalar</h2>
+            <p><strong>Not:</strong> Dünyanın tekrarlanması <code>wrapX: false</code> ayarıyla çözülmüştür.</p>
+            <div id="openlayersMap"></div>
+        </div>
+    </div>
+
+    <script>
+        /* ==========================================
+           LEAFLET UYGULAMASI
+           ========================================== */
+        // Issue 2 Çözümü (Leaflet): maxBounds & minZoom ile harita sınırlandırılır
+        const southWest = L.latLng(-85, -180);
+        const northEast = L.latLng(85, 180);
+        const bounds = L.latLngBounds(southWest, northEast);
+
+        const leafletMap = L.map('leafletMap', {
+            maxBounds: bounds,
+            maxBoundsViscosity: 1.0,
+            minZoom: 2
+        }).setView([39.9334, 32.8597], 5); // Türkiye merkezli
+
+        // noWrap: true -> Dünyanın sağa-sola tekrarlanmasını önler
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            noWrap: true,
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(leafletMap);
+
+        // Gezmek istenen noktalar
+        const places = [
+            { name: "Ankara (Anıtkabir)", lat: 39.9255, lng: 32.8369 },
+            { name: "Kapadokya (Peri Bacaları)", lat: 38.6431, lng: 34.8289 },
+            { name: "İzmir (Efes Antik Kenti)", lat: 37.9411, lng: 27.3414 },
+            { name: "Roma (Kolezyum)", lat: 41.8902, lng: 12.4922 }
+        ];
+
+        // Marker katman grubu
+        const markerGroup = L.layerGroup();
+        places.forEach(p => {
+            const marker = L.marker([p.lat, p.lng]).bindPopup(`<b>${p.name}</b><br>Gezilecekler Listesi`);
+            markerGroup.addLayer(marker);
+        });
+
+        // Issue 1 Çözümü (Leaflet): Zoom eşiği fonksiyonu (Örn: Zoom >= 6 ise göster)
+        const ZOOM_THRESHOLD = 6;
+        function updateLeafletMarkers() {
+            if (leafletMap.getZoom() >= ZOOM_THRESHOLD) {
+                if (!leafletMap.hasLayer(markerGroup)) {
+                    leafletMap.addLayer(markerGroup);
+                }
+            } else {
+                if (leafletMap.hasLayer(markerGroup)) {
+                    leafletMap.removeLayer(markerGroup);
+                }
+            }
+        }
+
+        leafletMap.on('zoomend', updateLeafletMarkers);
+        updateLeafletMarkers(); // İlk yüklemede kontrol et
+
+
+        /* ==========================================
+           OPENLAYERS UYGULAMASI
+           ========================================== */
+        // Issue 2 Çözümü (OpenLayers): wrapX: false -> tile'ların yatay tekrarını kapatır
+        const olOsmSource = new ol.source.OSM({
+            wrapX: false
+        });
+
+        const openlayersMap = new ol.Map({
+            target: 'openlayersMap',
+            layers: [
+                new ol.layer.Tile({
+                    source: olOsmSource
+                })
+            ],
+            view: new ol.View({
+                center: ol.proj.fromLonLat([35.0, 39.0]),
+                zoom: 4,
+                minZoom: 2,
+                extent: ol.proj.get("EPSG:3857").getExtent() // Harita dışına kaymayı önler
+            })
+        });
+
+        // OpenLayers üzerine bir rota noktası ekleme
+        const markerFeature = new ol.Feature({
+            geometry: new ol.geom.Point(ol.proj.fromLonLat([32.8597, 39.9334])),
+            name: 'Ankara'
+        });
+
+        const vectorSource = new ol.source.Vector({
+            features: [markerFeature],
+            wrapX: false
+        });
+
+        const vectorLayer = new ol.layer.Vector({
+            source: vectorSource,
+            // Issue 1 Çözümü (OpenLayers): maxResolution veya minZoom seviyesi ayarlanabilir
+            minZoom: 5 
+        });
+
+        openlayersMap.addLayer(vectorLayer);
+    </script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nurselin Alabacak - Geomatik Mühendisi</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Üst Menü -->
+    <nav>
+        <div class="brand">
+            <div class="logo-name">Nurselin Alabacak</div>
+            <div class="logo-subtitle">
+                <span>🌍</span> Geomatik Mühendisi
+            </div>
+        </div>
+        <ul>
+            <li><a href="#hakkimda" class="active">Hakkımda</a></li>
+            <li><a href="#projeler">Projeler</a></li>
+            <li><a href="#harita">Harita & CBS</a></li>
+            <li><a href="#iletisim">İletişim</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <!-- Tanıtım Kartı -->
+        <section class="hero-box" id="hakkimda">
+            <h1>Merhaba, ben Nurselin.</h1>
+            <p>
+                Geomatik mühendisliği, coğrafi bilgi sistemleri (CBS) ve mekânsal veri analizi alanlarında çalışıyorum. 
+                Mekânsal verileri anlaşılır haritalara ve analitik çözümlere dönüştürmeyi seviyorum.
+            </p>
+        </section>
+
+        <!-- Proje / Çalışma Tablosu -->
+        <table class="custom-table" id="projeler">
+            <thead>
+                <tr>
+                    <th>Görsel</th>
+                    <th>Çalışma / Proje</th>
+                    <th>Alan</th>
+                    <th>Tarih</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><img src="https://via.placeholder.com/60x85" alt="Proje"></td>
+                    <td>Mekânsal Analiz & Arazi Kullanımı</td>
+                    <td>Coğrafi Bilgi Sistemleri (CBS)</td>
+                    <td>2024</td>
+                </tr>
+                <tr>
+                    <td><img src="https://via.placeholder.com/60x85" alt="Proje"></td>
+                    <td>Uydu Görüntüleri ile Değişim Tespiti</td>
+                    <td>Uzaktan Algılama</td>
+                    <td>2024</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Harita Alanı -->
+        <section class="map-container" id="harita">
+            <div class="map-header">
+                <h2>Çalışma Alanı & CBS Analizleri</h2>
+                <span class="map-badge">İnteraktif Katman</span>
+            </div>
+            <!-- Leaflet veya OpenLayers kütüphanenizin render edileceği div -->
+            <div id="leafletMap"></div>
+        </section>
+    </div>
+
+</body>
+</html>
