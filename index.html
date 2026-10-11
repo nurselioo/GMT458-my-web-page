@@ -1,10 +1,73 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nurselin Alabacak - Geomatik Mühendisi</title>
+    <title>Nurselin Alabacak - Geomatics Engineering Student</title>
     <link rel="stylesheet" href="style.css">
+
+    <!-- Leaflet Harita Kütüphanesi -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- OpenLayers Harita Kütüphanesi -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v8.2.0/ol.css">
+    <script src="https://cdn.jsdelivr.net/npm/ol@v8.2.0/dist/ol.js"></script>
+
+    <style>
+        /* Kitap kapak resim boyutu */
+        table.custom-table img.book-cover {
+            width: 85px !important;
+            height: 120px !important;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        /* Çizimlerin tam görünmesi */
+        .art-card img {
+            width: 100% !important;
+            height: auto !important;
+            max-height: 380px !important;
+            object-fit: contain !important;
+            display: block;
+        }
+
+        /* Harita kapsayıcı stilleri */
+        #placesMap, #openlayersMap {
+            width: 100%;
+            height: 520px;
+            border-radius: var(--radius-element);
+            border: 1.5px solid var(--border-pink);
+            z-index: 1;
+        }
+
+        /* Raptiye ve İsim Etiketi Stili */
+        .pin-marker-container {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        .pin-icon {
+            font-size: 1.8rem;
+            line-height: 1;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
+        .pin-label {
+            background-color: #FFF0F2;           /* Açık toz pembe arka plan */
+            color: #B85B6C;                      /* Koyu gül kurusu yazı rengi */
+            font-size: 0.82rem;
+            font-weight: 700;
+            padding: 3px 9px;
+            border-radius: 8px;
+            border: 1.5px solid #E8B4B8;        /* Gül kurusu çerçeve */
+            box-shadow: 0 3px 8px rgba(184, 91, 108, 0.2);
+        }
+    </style>
 </head>
 <body>
 
@@ -13,63 +76,262 @@
         <div class="brand">
             <div class="logo-name">Nurselin Alabacak</div>
             <div class="logo-subtitle">
-                <span>🌍</span> Geomatik Mühendisi
+                <img src="images/icon.png" alt="Icon" class="logo-icon">
+                <span>Geomatics Engineering Student</span>
             </div>
         </div>
         <ul>
-            <li><a href="#hakkimda" class="active">Hakkımda</a></li>
-            <li><a href="#projeler">Projeler</a></li>
-            <li><a href="#harita">Harita & CBS</a></li>
-            <li><a href="#iletisim">İletişim</a></li>
+            <li><a href="#about" class="active">About</a></li>
+            <li><a href="#favouritebooks">Favourite Books</a></li>
+            <li><a href="#places">Places I Want to See</a></li>
+            <li><a href="#art">Art Things</a></li>
         </ul>
     </nav>
 
     <div class="container">
         <!-- Tanıtım Kartı -->
-        <section class="hero-box" id="hakkimda">
-            <h1>Merhaba, ben Nurselin.</h1>
+        <section class="hero-box" id="about">
+            <h1>Hello, I am Nurselin</h1>
             <p>
-                Geomatik mühendisliği, coğrafi bilgi sistemleri (CBS) ve mekânsal veri analizi alanlarında çalışıyorum. 
-                Mekânsal verileri anlaşılır haritalara ve analitik çözümlere dönüştürmeyi seviyorum.
+                I am in my fourth year of Geomatics Engineering.
+                I live in Ankara. I would like to master's degree in remote sensing.
+                I speak English at an intermediate level and German at a beginner level. 
+                This is my personal web page like an autobiography.
             </p>
         </section>
 
-        <!-- Proje / Çalışma Tablosu -->
-        <table class="custom-table" id="projeler">
-            <thead>
-                <tr>
-                    <th>Görsel</th>
-                    <th>Çalışma / Proje</th>
-                    <th>Alan</th>
-                    <th>Tarih</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><img src="https://via.placeholder.com/60x85" alt="Proje"></td>
-                    <td>Mekânsal Analiz & Arazi Kullanımı</td>
-                    <td>Coğrafi Bilgi Sistemleri (CBS)</td>
-                    <td>2024</td>
-                </tr>
-                <tr>
-                    <td><img src="https://via.placeholder.com/60x85" alt="Proje"></td>
-                    <td>Uydu Görüntüleri ile Değişim Tespiti</td>
-                    <td>Uzaktan Algılama</td>
-                    <td>2024</td>
-                </tr>
-            </tbody>
-        </table>
+        <!-- Favori Kitaplar Tablosu -->
+        <section id="favouritebooks" style="margin-top: 2.5rem;">
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th style="width: 120px;">Cover</th>
+                        <th>Book Title & Author</th>
+                        <th style="width: 140px;">Date Read</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- 1. Küçük Prens -->
+                    <tr>
+                        <td>
+                            <img src="images/kucuk.png" alt="Küçük Prens" class="book-cover">
+                        </td>
+                        <td>
+                            <strong style="font-size: 1.05rem;">The Little Prince</strong><br>
+                            <span style="font-size: 0.9rem; color: var(--text-muted);">Antoine de Saint-Exupéry</span>
+                        </td>
+                        <td><strong>2015</strong></td>
+                    </tr>
 
-        <!-- Harita Alanı -->
-        <section class="map-container" id="harita">
-            <div class="map-header">
-                <h2>Çalışma Alanı & CBS Analizleri</h2>
-                <span class="map-badge">İnteraktif Katman</span>
+                    <!-- 2. Oz Büyücüsü -->
+                    <tr>
+                        <td>
+                            <img src="images/oz.png" alt="Oz Büyücüsü" class="book-cover">
+                        </td>
+                        <td>
+                            <strong style="font-size: 1.05rem;">The Wonderful Wizard of Oz</strong><br>
+                            <span style="font-size: 0.9rem; color: var(--text-muted);">L. Frank Baum</span>
+                        </td>
+                        <td><strong>2018</strong></td>
+                    </tr>
+
+                    <!-- 3. Dorian Gray'in Portresi -->
+                    <tr>
+                        <td>
+                            <img src="images/dorian.png" alt="Dorian Gray'in Portresi" class="book-cover">
+                        </td>
+                        <td>
+                            <strong style="font-size: 1.05rem;">The Picture of Dorian Gray</strong><br>
+                            <span style="font-size: 0.9rem; color: var(--text-muted);">Oscar Wilde</span>
+                        </td>
+                        <td><strong>2021</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Places I Want to See Bölümü -->
+        <section id="places" style="margin-top: 3.5rem;">
+            <!-- 1. Leaflet Haritası -->
+            <div class="map-container">
+                <div class="map-header">
+                    <h2>Places I Want to See (Leaflet)</h2>
+                    <span class="map-badge">Leaflet Map</span>
+                </div>
+                <div id="placesMap"></div>
             </div>
-            <!-- Leaflet veya OpenLayers kütüphanenizin render edileceği div -->
-            <div id="leafletMap"></div>
+
+            <!-- 2. OpenLayers Haritası -->
+            <div class="map-container" style="margin-top: 2.5rem;">
+                <div class="map-header">
+                    <h2>Target Destinations (OpenLayers)</h2>
+                    <span class="map-badge">OpenLayers Map</span>
+                </div>
+                <div id="openlayersMap"></div>
+            </div>
+        </section>
+
+        <!-- Art Things Bölümü -->
+        <section id="art" class="hero-box" style="margin-top: 3.5rem; margin-bottom: 3rem;">
+            <h2 style="color: var(--text-primary); margin-bottom: 1rem;">Art Things</h2>
+
+            <!-- 3 Çizim Galerisi -->
+            <div class="art-gallery">
+                <div class="art-card">
+                    <img src="images/art1.jpeg" alt="Artwork 1">
+                </div>
+                <div class="art-card">
+                    <img src="images/art2.jpeg" alt="Artwork 2">
+                </div>
+                <div class="art-card">
+                    <img src="images/art3.jpeg" alt="Artwork 3">
+                </div>
+            </div>
         </section>
     </div>
 
+    <!-- Harita ve Menü Scriptleri -->
+    <script>
+        /* ==========================================================
+           1. LEAFLET HARİTASI (PLACES I WANT TO SEE)
+           ========================================================== */
+        const southWest = L.latLng(-85, -180);
+        const northEast = L.latLng(85, 180);
+        const worldBounds = L.latLngBounds(southWest, northEast);
+
+        const map = L.map('placesMap', {
+            maxBounds: worldBounds,
+            maxBoundsViscosity: 1.0,
+            minZoom: 1,
+            maxZoom: 18
+        }).setView([20.0, 10.0], 2);
+
+        // Canlı Esri Topo harita katmanı
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+            noWrap: true,
+            maxZoom: 18,
+            attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, USGS'
+        }).addTo(map);
+
+        // Seçtiğiniz 5 Hedef Lokasyon
+        const wishlistDestinations = [
+            { 
+                name: "Alaska, USA", 
+                note: "Vast wilderness, glaciers, and breathtaking aurora borealis.", 
+                lat: 64.2008, 
+                lng: -149.4937 
+            },
+            { 
+                name: "Indonesia", 
+                note: "Tropical islands, volcanic landscapes, and rich cultural heritage.", 
+                lat: -0.7893, 
+                lng: 113.9213 
+            },
+            { 
+                name: "United Kingdom", 
+                note: "Historic castles, museums, and classic architectural scenery.", 
+                lat: 53.4807, 
+                lng: -2.2426 
+            },
+            { 
+                name: "Peru", 
+                note: "Ancient Incan heritage, Machu Picchu, and the Andes mountains.", 
+                lat: -12.0464, 
+                lng: -75.0428 
+            },
+            { 
+                name: "South Africa", 
+                note: "Dramatic coastlines, Cape Town, and extraordinary biodiversity.", 
+                lat: -30.5595, 
+                lng: 22.9375 
+            }
+        ];
+
+        // Raptiyeleri Leaflet haritasına ekleme
+        wishlistDestinations.forEach(item => {
+            const pinIcon = L.divIcon({
+                className: '',
+                html: `
+                    <div class="pin-marker-container">
+                        <span class="pin-icon">📍</span>
+                        <span class="pin-label">${item.name}</span>
+                    </div>
+                `,
+                iconSize: [140, 40],
+                iconAnchor: [12, 30]
+            });
+
+            const popupContent = `
+                <div style="font-family: 'Plus Jakarta Sans', sans-serif;">
+                    <h3 style="margin: 0 0 5px 0; color: #B85B6C; font-size: 1rem;">📍 ${item.name}</h3>
+                    <p style="margin: 0; color: #6C584C; font-size: 0.85rem; line-height: 1.4;">${item.note}</p>
+                </div>
+            `;
+
+            L.marker([item.lat, item.lng], { icon: pinIcon })
+                .addTo(map)
+                .bindPopup(popupContent);
+        });
+
+        /* ==========================================================
+           2. OPENLAYERS (OL) HARİTASI
+           ========================================================== */
+        const olSource = new ol.source.XYZ({
+            url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
+            wrapX: false // Issue 2 Çözümü: OpenLayers dünya tekrarını engeller
+        });
+
+        const openlayersMap = new ol.Map({
+            target: 'openlayersMap',
+            layers: [
+                new ol.layer.Tile({
+                    source: olSource
+                })
+            ],
+            view: new ol.View({
+                center: ol.proj.fromLonLat([15.0, 20.0]),
+                zoom: 2,
+                minZoom: 1,
+                extent: ol.proj.get("EPSG:3857").getExtent()
+            })
+        });
+
+        // 5 Lokasyonu OpenLayers üzerine ekleme
+        const olFeatures = wishlistDestinations.map(dest => {
+            return new ol.Feature({
+                geometry: new ol.geom.Point(ol.proj.fromLonLat([dest.lng, dest.lat])),
+                name: dest.name
+            });
+        });
+
+        const olVectorSource = new ol.source.Vector({
+            features: olFeatures,
+            wrapX: false
+        });
+
+        const olVectorLayer = new ol.layer.Vector({
+            source: olVectorSource,
+            style: new ol.style.Style({
+                text: new ol.style.Text({
+                    text: '📍',
+                    scale: 1.5,
+                    offsetY: -10
+                })
+            })
+        });
+
+        openlayersMap.addLayer(olVectorLayer);
+
+        /* ==========================================================
+           MENÜDE TIKLANAN BAŞLIĞI AKTİF (PEMBE) TUTMA
+           ========================================================== */
+        const navLinks = document.querySelectorAll('nav ul li a');
+        navLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                navLinks.forEach(item => item.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
 </body>
 </html>

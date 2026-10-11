@@ -1,54 +1,91 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Kişisel Web Sayfası | Kitaplar</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nurselin Alabacak - Favourite Books</title>
     <link rel="stylesheet" href="style.css">
+
+    <style>
+        /* Kitap kapak resim boyutu */
+        table.custom-table img.book-cover {
+            width: 85px !important;
+            height: 120px !important;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+    </style>
 </head>
 <body>
+
+    <!-- Üst Menü -->
     <nav>
-        <div class="logo">GMT 458 - Web GIS</div>
+        <div class="brand">
+            <div class="logo-name">Nurselin Alabacak</div>
+            <div class="logo-subtitle">
+                <img src="images/icon.png" alt="Icon" class="logo-icon">
+                <span>Geomatics Engineering Student</span>
+            </div>
+        </div>
         <ul>
-            <li><a href="index.html">Hakkımda</a></li>
-            <li><a href="books.html" class="active">Kitaplar</a></li>
-            <li><a href="maps.html">Haritalar (Gezilecek Yerler)</a></li>
+            <li><a href="index.html">About & Art</a></li>
+            <li><a href="books.html" class="active">Favourite Books</a></li>
+            <li><a href="maps.html">Places I Want to See</a></li>
         </ul>
     </nav>
 
     <div class="container">
-        <h2>Okuduğum & Favori Kitaplarım</h2>
-        <p>Aşağıdaki tabloda okuduğum kitaplar, yazarları ve kapak görselleri listelenmiştir.</p>
+        <!-- Favori Kitaplar Tablosu -->
+        <section id="favouritebooks" style="margin-top: 2.5rem; margin-bottom: 3rem;">
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th style="width: 120px;">Cover</th>
+                        <th>Book Title & Author</th>
+                        <th style="width: 140px;">Date Read</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- 1. Küçük Prens -->
+                    <tr>
+                        <td>
+                            <img src="images/kucuk.png" alt="Küçük Prens" class="book-cover">
+                        </td>
+                        <td>
+                            <strong style="font-size: 1.05rem;">The Little Prince</strong><br>
+                            <span style="font-size: 0.9rem; color: var(--text-muted);">Antoine de Saint-Exupéry</span>
+                        </td>
+                        <td><strong>2015</strong></td>
+                    </tr>
 
-        <table class="custom-table">
-            <thead>
-                <tr>
-                    <th>Kapak</th>
-                    <th>Kitap Adı</th>
-                    <th>Yazar</th>
-                    <th>Kategori / Not</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=150" alt="Kırmızı Pazartesi"></td>
-                    <td>Kırmızı Pazartesi</td>
-                    <td>Gabriel García Márquez</td>
-                    <td>Klasik Roman - Çarpıcı bir kurgusal anlatı.</td>
-                </tr>
-                <tr>
-                    <td><img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=150" alt="Sherlock Holmes"></td>
-                    <td>Sherlock Holmes Bütün Hikayeleri</td>
-                    <td>Arthur Conan Doyle</td>
-                    <td>Polisiye - Akıl yürütme ve gözlem sanatı.</td>
-                </tr>
-                <tr>
-                    <td><img src="https://images.unsplash.com/photo-1532012164546-f432f2e3777f?w=150" alt="Yılanı Öldürseler"></td>
-                    <td>Yılanı Öldürseler</td>
-                    <td>Yaşar Kemal</td>
-                    <td>Türk Edebiyatı - Anadolu tahlili.</td>
-                </tr>
-            </tbody>
-        </table>
+                    <!-- 2. Oz Büyücüsü -->
+                    <tr>
+                        <td>
+                            <img src="images/oz.png" alt="Oz Büyücüsü" class="book-cover">
+                        </td>
+                        <td>
+                            <strong style="font-size: 1.05rem;">The Wonderful Wizard of Oz</strong><br>
+                            <span style="font-size: 0.9rem; color: var(--text-muted);">L. Frank Baum</span>
+                        </td>
+                        <td><strong>2018</strong></td>
+                    </tr>
+
+                    <!-- 3. Dorian Gray'in Portresi -->
+                    <tr>
+                        <td>
+                            <img src="images/dorian.png" alt="Dorian Gray'in Portresi" class="book-cover">
+                        </td>
+                        <td>
+                            <strong style="font-size: 1.05rem;">The Picture of Dorian Gray</strong><br>
+                            <span style="font-size: 0.9rem; color: var(--text-muted);">Oscar Wilde</span>
+                        </td>
+                        <td><strong>2021</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
     </div>
+
 </body>
 </html>

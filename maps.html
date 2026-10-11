@@ -1,139 +1,198 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Kişisel Web Sayfası | Haritalar</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nurselin Alabacak - Places I Want to See</title>
     <link rel="stylesheet" href="style.css">
 
-    <!-- Leaflet CSS & JS -->
+    <!-- 1. Leaflet Harita Kütüphanesi -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-    <!-- OpenLayers CSS & JS -->
+    <!-- 2. OpenLayers Harita Kütüphanesi -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v8.2.0/ol.css">
     <script src="https://cdn.jsdelivr.net/npm/ol@v8.2.0/dist/ol.js"></script>
+
+    <style>
+        .map-box {
+            width: 100%;
+            height: 480px;
+            border-radius: var(--radius-element);
+            border: 1.5px solid var(--border-pink);
+            z-index: 1;
+        }
+
+        /* Raptiye ve İsim Etiketi Stili */
+        .pin-marker-container {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        .pin-icon {
+            font-size: 1.8rem;
+            line-height: 1;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
+        .pin-label {
+            background-color: #FFF0F2;
+            color: #B85B6C;
+            font-size: 0.82rem;
+            font-weight: 700;
+            padding: 3px 9px;
+            border-radius: 8px;
+            border: 1.5px solid #E8B4B8;
+            box-shadow: 0 3px 8px rgba(184, 91, 108, 0.2);
+        }
+    </style>
 </head>
 <body>
+
+    <!-- Üst Menü -->
     <nav>
-        <div class="logo">GMT 458 - Web GIS</div>
+        <div class="brand">
+            <div class="logo-name">Nurselin Alabacak</div>
+            <div class="logo-subtitle">
+                <img src="images/icon.png" alt="Icon" class="logo-icon">
+                <span>Geomatics Engineering Student</span>
+            </div>
+        </div>
         <ul>
-            <li><a href="index.html">Hakkımda</a></li>
-            <li><a href="books.html">Kitaplar</a></li>
-            <li><a href="maps.html" class="active">Haritalar (Gezilecek Yerler)</a></li>
+            <li><a href="index.html">About & Art</a></li>
+            <li><a href="books.html">Favourite Books</a></li>
+            <li><a href="maps.html" class="active">Places I Want to See</a></li>
         </ul>
     </nav>
 
     <div class="container">
-        <!-- Leaflet Bölümü -->
-        <div class="map-container">
-            <h2>1. Leaflet Haritası - Gezmek İstediğim Yerler</h2>
-            <p><strong>Not:</strong> Marker çakışmasını önlemek için işaretçiler sadece <em>Zoom &ge; 6</em> seviyesinde görünür. Haritanın yatayda tekrarlanması <code>noWrap: true</code> ile engellenmiştir.</p>
-            <div id="leafletMap"></div>
-        </div>
+        <!-- Leaflet Haritası -->
+        <section style="margin-top: 2.5rem;">
+            <div class="map-container">
+                <div class="map-header">
+                    <h2>Places I Want to See (Leaflet)</h2>
+                    <span class="map-badge">Zoom &ge; 3 Threshold</span>
+                </div>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">
+                    * <strong>Issue 1 Solved:</strong> Markers are hidden at global zoom and appear once zoomed in (&ge; 3).<br>
+                    * <strong>Issue 2 Solved:</strong> Earth horizontal replication is restricted with <code>noWrap: true</code> and bounding constraints.
+                </p>
+                <div id="placesMap" class="map-box"></div>
+            </div>
+        </section>
 
-        <!-- OpenLayers Bölümü -->
-        <div class="map-container">
-            <h2>2. OpenLayers Haritası - Gezilecek Rotalar</h2>
-            <p><strong>Not:</strong> Dünyanın tekrarlanması <code>wrapX: false</code> ayarıyla çözülmüştür.</p>
-            <div id="openlayersMap"></div>
-        </div>
+        <!-- OpenLayers Haritası -->
+        <section style="margin-top: 3rem; margin-bottom: 4rem;">
+            <div class="map-container">
+                <div class="map-header">
+                    <h2>Global Perspective (OpenLayers)</h2>
+                    <span class="map-badge">wrapX: false</span>
+                </div>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">
+                    * <strong>Issue 2 Solved with OpenLayers:</strong> Tile layers rendered with <code>wrapX: false</code> preventing earth duplication.
+                </p>
+                <div id="openlayersMap" class="map-box"></div>
+            </div>
+        </section>
     </div>
 
+    <!-- Harita Scriptleri -->
     <script>
-        /* ==========================================
-           LEAFLET UYGULAMASI
-           ========================================== */
-        // Issue 2 Çözümü (Leaflet): maxBounds & minZoom ile harita sınırlandırılır
+        /* ==========================================================
+           1. LEAFLET HARİTASI (5 Lokasyon, Issue 1 & Issue 2)
+           ========================================================== */
         const southWest = L.latLng(-85, -180);
         const northEast = L.latLng(85, 180);
-        const bounds = L.latLngBounds(southWest, northEast);
+        const worldBounds = L.latLngBounds(southWest, northEast);
 
-        const leafletMap = L.map('leafletMap', {
-            maxBounds: bounds,
+        const map = L.map('placesMap', {
+            maxBounds: worldBounds,
             maxBoundsViscosity: 1.0,
-            minZoom: 2
-        }).setView([39.9334, 32.8597], 5); // Türkiye merkezli
+            minZoom: 2,
+            maxZoom: 18
+        }).setView([20.0, 10.0], 3); // Başlangıçta zoom 3 (raptiyeler hemen açık gelir)
 
-        // noWrap: true -> Dünyanın sağa-sola tekrarlanmasını önler
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        // Canlı ve engelsiz Esri Topo katmanı (noWrap: true)
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
             noWrap: true,
-            attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(leafletMap);
+            maxZoom: 18,
+            attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom'
+        }).addTo(map);
 
-        // Gezmek istenen noktalar
-        const places = [
-            { name: "Ankara (Anıtkabir)", lat: 39.9255, lng: 32.8369 },
-            { name: "Kapadokya (Peri Bacaları)", lat: 38.6431, lng: 34.8289 },
-            { name: "İzmir (Efes Antik Kenti)", lat: 37.9411, lng: 27.3414 },
-            { name: "Roma (Kolezyum)", lat: 41.8902, lng: 12.4922 }
+        // 5 Hedef Lokasyon
+        const wishlistDestinations = [
+            { name: "Alaska, USA", note: "Vast wilderness, glaciers, and northern lights.", lat: 64.2008, lng: -149.4937 },
+            { name: "Indonesia", note: "Tropical archipelago and volcanic landscapes.", lat: -0.7893, lng: 113.9213 },
+            { name: "United Kingdom", note: "Historic architecture and cultural heritage.", lat: 53.4807, lng: -2.2426 },
+            { name: "Peru", note: "Ancient Incan heritage and Machu Picchu.", lat: -12.0464, lng: -75.0428 },
+            { name: "South Africa", note: "Scenic coastal geology and diverse nature.", lat: -30.5595, lng: 22.9375 }
         ];
 
-        // Marker katman grubu
-        const markerGroup = L.layerGroup();
-        places.forEach(p => {
-            const marker = L.marker([p.lat, p.lng]).bindPopup(`<b>${p.name}</b><br>Gezilecekler Listesi`);
-            markerGroup.addLayer(marker);
+        // Marker Grubu
+        const markersGroup = L.layerGroup();
+
+        wishlistDestinations.forEach(item => {
+            const pinIcon = L.divIcon({
+                className: '',
+                html: `
+                    <div class="pin-marker-container">
+                        <span class="pin-icon">📍</span>
+                        <span class="pin-label">${item.name}</span>
+                    </div>
+                `,
+                iconSize: [140, 40],
+                iconAnchor: [12, 30]
+            });
+
+            const popupContent = `
+                <div style="font-family: 'Plus Jakarta Sans', sans-serif;">
+                    <h3 style="margin: 0 0 5px 0; color: #B85B6C; font-size: 1rem;">📍 ${item.name}</h3>
+                    <p style="margin: 0; color: #6C584C; font-size: 0.85rem; line-height: 1.4;">${item.note}</p>
+                </div>
+            `;
+
+            const m = L.marker([item.lat, item.lng], { icon: pinIcon }).bindPopup(popupContent);
+            markersGroup.addLayer(m);
         });
 
-        // Issue 1 Çözümü (Leaflet): Zoom eşiği fonksiyonu (Örn: Zoom >= 6 ise göster)
-        const ZOOM_THRESHOLD = 6;
-        function updateLeafletMarkers() {
-            if (leafletMap.getZoom() >= ZOOM_THRESHOLD) {
-                if (!leafletMap.hasLayer(markerGroup)) {
-                    leafletMap.addLayer(markerGroup);
-                }
+        // Issue 1 Çözümü: Zoom Threshold
+        const ZOOM_THRESHOLD = 3;
+        function updateMarkerVisibility() {
+            if (map.getZoom() >= ZOOM_THRESHOLD) {
+                if (!map.hasLayer(markersGroup)) map.addLayer(markersGroup);
             } else {
-                if (leafletMap.hasLayer(markerGroup)) {
-                    leafletMap.removeLayer(markerGroup);
-                }
+                if (map.hasLayer(markersGroup)) map.removeLayer(markersGroup);
             }
         }
+        map.on('zoomend', updateMarkerVisibility);
+        updateMarkerVisibility();
 
-        leafletMap.on('zoomend', updateLeafletMarkers);
-        updateLeafletMarkers(); // İlk yüklemede kontrol et
 
-
-        /* ==========================================
-           OPENLAYERS UYGULAMASI
-           ========================================== */
-        // Issue 2 Çözümü (OpenLayers): wrapX: false -> tile'ların yatay tekrarını kapatır
-        const olOsmSource = new ol.source.OSM({
-            wrapX: false
+        /* ==========================================================
+           2. OPENLAYERS HARİTASI (Yönerge Şartı: OpenLayers & wrapX: false)
+           ========================================================== */
+        const olSource = new ol.source.XYZ({
+            url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
+            wrapX: false // Issue 2 Çözümü: Dünyanın OpenLayers'ta tekrar etmesini engeller
         });
 
         const openlayersMap = new ol.Map({
             target: 'openlayersMap',
             layers: [
                 new ol.layer.Tile({
-                    source: olOsmSource
+                    source: olSource
                 })
             ],
             view: new ol.View({
-                center: ol.proj.fromLonLat([35.0, 39.0]),
-                zoom: 4,
+                center: ol.proj.fromLonLat([15.0, 30.0]),
+                zoom: 2,
                 minZoom: 2,
-                extent: ol.proj.get("EPSG:3857").getExtent() // Harita dışına kaymayı önler
+                extent: ol.proj.get("EPSG:3857").getExtent()
             })
         });
-
-        // OpenLayers üzerine bir rota noktası ekleme
-        const markerFeature = new ol.Feature({
-            geometry: new ol.geom.Point(ol.proj.fromLonLat([32.8597, 39.9334])),
-            name: 'Ankara'
-        });
-
-        const vectorSource = new ol.source.Vector({
-            features: [markerFeature],
-            wrapX: false
-        });
-
-        const vectorLayer = new ol.layer.Vector({
-            source: vectorSource,
-            // Issue 1 Çözümü (OpenLayers): maxResolution veya minZoom seviyesi ayarlanabilir
-            minZoom: 5 
-        });
-
-        openlayersMap.addLayer(vectorLayer);
     </script>
 </body>
 </html>

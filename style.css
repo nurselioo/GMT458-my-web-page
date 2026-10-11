@@ -13,7 +13,7 @@
     --brand-pink-dark: #B85B6C;      /* Başlık ve logo için koyu gül kurusu */
     --brand-pink-soft: #F9EBEA;      /* Rozet ve etiket arka planı */
     
-    --coffee-dark: #3E2723;          /* Tablo başlığı için sıcak moka kahve */
+    --coffee-dark: var(--brand-pink-dark); /* Tablo başlığı artık adınızın rengiyle aynı gül kurusu */
     --border-color: #EADCC9;         /* Latte tonlarında yumuşak ayraç çizgileri */
     --border-pink: #E8B4B8;          /* Harita ve görseller için ince gül kurusu kenarlık */
     
@@ -66,12 +66,21 @@ nav {
 
 .brand .logo-subtitle {
     color: var(--brand-pink);
-    font-size: 0.85rem;
+    font-size: 0.95rem;
     font-weight: 600;
     display: flex;
     align-items: center;
-    gap: 0.35rem;
-    margin-top: 2px;
+    gap: 0.55rem;
+    margin-top: 4px;
+}
+
+/* Pembe dünya ikonunun boyutu ve hizası */
+.brand .logo-subtitle img,
+.brand .logo-icon {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    display: inline-block;
 }
 
 nav ul {
@@ -98,9 +107,9 @@ nav a:hover, nav a.active {
     margin: 2.5rem auto;
     padding: 0 1.2rem;
 }
-
 .hero-box {
-    background: var(--surface-card);
+    background: #FDF2F4;
+    border: 1px solid #F5D5DA;
     padding: 3rem 2.5rem;
     border-radius: var(--radius-soft);
     box-shadow: var(--shadow-warm);
@@ -149,7 +158,7 @@ table.custom-table th, table.custom-table td {
 }
 
 table.custom-table th {
-    background-color: var(--coffee-dark);
+    background-color: var(--coffee-dark); /* Gül kurusu */
     color: #FDFBF7;
     font-weight: 700;
     font-size: 0.95rem;
@@ -211,4 +220,41 @@ table.custom-table img {
     height: 440px;
     border-radius: var(--radius-element);
     border: 1.5px solid var(--border-pink); /* İnce gül kurusu çerçeve */
+}
+
+/* --- Art Things Galeri Stilleri --- */
+.art-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.art-card {
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+    border: 1px solid var(--border-pink);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    text-align: center;
+}
+
+.art-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 18px rgba(184, 91, 108, 0.15);
+}
+
+.art-card img {
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+    display: block;
+}
+
+.art-card p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    padding: 0.7rem 0.4rem;
+    font-weight: 600;
 }
